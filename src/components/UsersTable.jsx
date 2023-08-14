@@ -52,7 +52,7 @@ function UsersTable() {
     }
 
     if (str === 'onclick') {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         const userId = uuidv4();
 
         const firstName = fakerInstance.person.firstName();
