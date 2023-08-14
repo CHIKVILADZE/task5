@@ -69,7 +69,7 @@ function UsersTable() {
         data.push({ userId, fullName, address, phone });
       }
     } else {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         const userId = uuidv4();
 
         const firstName = fakerInstance.person.firstName();
