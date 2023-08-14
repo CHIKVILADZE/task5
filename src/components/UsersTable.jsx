@@ -23,7 +23,7 @@ function UsersTable() {
   const generateRandomSeed = (str) => {
     const randomSeed = Math.floor(Math.random() * 1000000);
     setSeed(randomSeed);
-    generateRandomUserData('onClick');
+    generateRandomUserData('onclick');
   };
 
   const generateRandomUserData = (str) => {
@@ -52,7 +52,7 @@ function UsersTable() {
     }
 
     if (str === 'onclick') {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         const userId = uuidv4();
 
         const firstName = fakerInstance.person.firstName();
