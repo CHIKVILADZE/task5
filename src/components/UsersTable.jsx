@@ -18,7 +18,7 @@ function UsersTable() {
 
   useEffect(() => {
     generateRandomUserData();
-  }, []);
+  }, [seed, region, errorRate]);
 
   const generateRandomSeed = (str) => {
     const randomSeed = Math.floor(Math.random() * 1000000);
@@ -26,17 +26,13 @@ function UsersTable() {
     generateRandomUserData('onclick');
   };
 
-  const generateRandomUserData = (str) => {
-    if (str === 'onclick') {
-      setUserData([]);
-    }
-
+  const generateRandomUserData = () => {
     const data = [];
-    const recordsPerPage = page === 1 ? 20 : 10;
+    const recordsPerPage = 20 + (page - 1) * 10; // Adjust recordsPerPage based on page number
     const seedForPage = seed + Math.floor(userData.length / recordsPerPage);
-    console.log('SEEED', seedForPage);
     let fakerInstance;
 
+    // Initialize fakerInstance based on selected region
     if (region === 'USA') {
       fakerInstance = new Faker({
         locale: [en_US, en],
@@ -51,44 +47,25 @@ function UsersTable() {
       });
     }
 
-    if (str === 'onclick') {
-      for (let i = 0; i < 10; i++) {
-        const userId = uuidv4();
+    for (let i = 0; i < recordsPerPage; i++) {
+      const userId = uuidv4();
 
-        const firstName = fakerInstance.person.firstName();
-        const lastName = fakerInstance.person.lastName();
-        const fullName = `${firstName} ${lastName}`;
+      const firstName = fakerInstance.person.firstName();
+      const lastName = fakerInstance.person.lastName();
+      const fullName = `${firstName} ${lastName}`;
 
-        const city = fakerInstance.location.city();
-        const street = fakerInstance.location.street();
-        const buildingNumber = fakerInstance.location.buildingNumber(999);
-        const address = `${city}, ${street} ${buildingNumber}`;
-        const phone = fakerInstance.phone.number();
+      const city = fakerInstance.location.city();
+      const street = fakerInstance.location.street();
+      const buildingNumber = fakerInstance.location.buildingNumber(999);
+      const address = `${city}, ${street} ${buildingNumber}`;
+      const phone = fakerInstance.phone.number();
 
-        let nameWithError = applyErrors(fullName);
-        data.push({ userId, fullName, address, phone });
-      }
-    } else {
-      for (let i = 0; i < 20; i++) {
-        const userId = uuidv4();
+      const nameWithError = applyErrors(fullName, errorRate);
 
-        const firstName = fakerInstance.person.firstName();
-        const lastName = fakerInstance.person.lastName();
-        const fullName = `${firstName} ${lastName}`;
-
-        const city = fakerInstance.location.city();
-        const street = fakerInstance.location.street();
-        const buildingNumber = fakerInstance.location.buildingNumber(999);
-        const address = `${city}, ${street} ${buildingNumber}`;
-        const phone = fakerInstance.phone.number();
-
-        let nameWithError = applyErrors(fullName);
-        data.push({ userId, fullName, address, phone });
-        console.log('dataaaa', data);
-      }
+      data.push({ userId, fullName: nameWithError, address, phone });
     }
 
-    setUserData((prevData) => [...prevData, ...data]);
+    setUserData(data);
   };
 
   const handleScroll = () => {
@@ -102,11 +79,10 @@ function UsersTable() {
       setPage((prevPage) => prevPage + 1);
     }
   };
-
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     if (isLoading) {
@@ -116,7 +92,6 @@ function UsersTable() {
       }, 1000);
     }
   }, [isLoading]);
-
   const applyErrors = (text, currentErrorRate) => {
     if (currentErrorRate === 0) {
       return text;
